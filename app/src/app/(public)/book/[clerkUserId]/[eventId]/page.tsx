@@ -27,14 +27,19 @@ export default async function BookEventPage({
 }: {
   params: { clerkUserId: string; eventId: string }
 }) {
+    // fetching event :parameters to fetch the corresponding event and user information from the database (db) and Clerk API (clerkClient).
   const event = await db.query.EventTable.findFirst({
     where: ({ clerkUserId: userIdCol, isActive, id }, { eq, and }) =>
       and(eq(isActive, true), eq(userIdCol, clerkUserId), eq(id, eventId)),
   })
+  console.log("event is", event)
 
   if (event == null) return notFound()
-
+ 
+ // This gets user data from the Clerk API for the user whose calendar is being accessed (the event owner).
   const calendarUser = await clerkClient().users.getUser(clerkUserId)
+  console.log("calendarUser",calendarUser)
+
   const startDate = roundToNearestMinutes(new Date(), {
     nearestTo: 15,
     roundingMethod: "ceil",
@@ -45,8 +50,10 @@ export default async function BookEventPage({
     eachMinuteOfInterval({ start: startDate, end: endDate }, { step: 15 }),
     event
   )
+  console.log("validTimes::",validTimes)
 
   if (validTimes.length === 0) {
+    console.log("validTimes", validTimes)
     return <NoTimeSlots event={event} calendarUser={calendarUser} />
   }
 

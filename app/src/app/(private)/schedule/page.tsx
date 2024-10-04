@@ -16,7 +16,7 @@ export default async function SchedulePage() {
   })
 
   return (
-    <Card className="max-w-md mx-auto">
+    <Card className="max-w-md container mx-auto">
       <CardHeader>
         <CardTitle>Schedule</CardTitle>
       </CardHeader>

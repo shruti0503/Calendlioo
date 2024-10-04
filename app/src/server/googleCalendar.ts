@@ -94,11 +94,15 @@ export async function createCalendarEvent({
 
 async function getOAuthClient(clerkUserId: string) {
 
+  console.log("clerkUserId is",clerkUserId)
+  const clientUsers= await clerkClient().users;
+  console.log("clientUsers",clientUsers)
   
   const token = await clerkClient().users.getUserOauthAccessToken(
     clerkUserId,
     "oauth_google"
   )
+ console.log("token is ", token)
 
   if (token.data.length === 0 || token.data[0].token == null) {
     return
