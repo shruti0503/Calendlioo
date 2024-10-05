@@ -84,7 +84,8 @@ export default function HomePage() {
 
         <div className="relative w-[50%] flex items-center justify-center">
   {/* Clock Container */}
-  <div className="relative flex justify-center items-center bg-red-400 h-[40rem] w-[40rem] lg:h-[50rem] lg:w-[50rem]  rounded-full z-0">
+  <div className="relative flex justify-center items-center bg-red-400 h-[40rem] w-[40rem] rounded-full z-0">
+
     {/* Clock face */}
     <div className="relative h-[400px] w-[400px] l bg-white rounded-full flex justify-center items-center">
       {/* Clock hands */}
