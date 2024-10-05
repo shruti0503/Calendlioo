@@ -11,6 +11,56 @@ body {
     text-wrap: balance;
   }
 }
+.bobbly-container {
+  z-index: 0 !important;
+  height: 100px;
+  /* opacity: 40%; */
+  background-color: lightblue;
+  border-radius: 50%;
+  position: absolute;
+  animation: bobble 5s ease-in-out infinite;
+}
+.bobble1{
+  left: 10rem;
+  height: 200px;
+  width: 200px;
+}
+.logoo{
+
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.bobble2{
+  right: 1rem;
+  height: 150px;
+  width: 150px;
+}
+.bobble3{
+/* top:10rem; */
+left: 1rem;
+ bottom: 5rem;
+ z-index: 0;
+ height: 100px;
+ width: 100px;
+}
+.bobble4{
+  right: 1rem;
+  bottom: 0rem;
+  height: 200px;
+  width: 200px;
+}
+
+
+@keyframes bobble {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
 
 @layer base {
   :root {
