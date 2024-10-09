@@ -29,7 +29,7 @@ export default async function BookEventPage({
 }) {
     // fetching event :parameters to fetch the corresponding event and user information from the database (db) and Clerk API (clerkClient).
   const event = await db.query.EventTable.findFirst({
-    where: ({ clerkUserId: userIdCol, isActive, id }, { eq, and }) =>
+      where: ({ clerkUserId: userIdCol, isActive, id }, { eq, and }) =>
       and(eq(isActive, true), eq(userIdCol, clerkUserId), eq(id, eventId)),
   })
   console.log("event is", event)

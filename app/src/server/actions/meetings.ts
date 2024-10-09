@@ -12,6 +12,8 @@ export async function createMeeting(
   unsafeData: z.infer<typeof meetingActionSchema>
 ) {
   const { success, data } = meetingActionSchema.safeParse(unsafeData)
+  console.log("meetingActionSchema.safeParse(unsafeData)",meetingActionSchema.safeParse(unsafeData))
+  console.log("success, data:", success, data)
 
   if (!success) return { error: true }
 
