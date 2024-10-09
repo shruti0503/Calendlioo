@@ -7,6 +7,7 @@ import { z } from "zod"
 import { createCalendarEvent } from "../googleCalendar"
 import { redirect } from "next/navigation"
 import { fromZonedTime } from "date-fns-tz"
+import { conforms } from "lodash"
 
 export async function createMeeting(
   unsafeData: z.infer<typeof meetingActionSchema>
@@ -26,7 +27,12 @@ export async function createMeeting(
       ),
   })
 
-  if (event == null) return { error: true }
+
+  if (event == null){
+    console.log("e")
+    console.log("event is null", event)
+    return { error: true }
+  } 
   const startInTimezone = fromZonedTime(data.startTime, data.timezone)
 
   const validTimes = await getValidTimesFromSchedule([startInTimezone], event)
