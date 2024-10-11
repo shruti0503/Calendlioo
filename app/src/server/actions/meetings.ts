@@ -28,6 +28,8 @@ export async function createMeeting(
         ),
     })
 
+    console.log("EVENT IS", event)
+
 
     if (event == null){
       console.log("e")
