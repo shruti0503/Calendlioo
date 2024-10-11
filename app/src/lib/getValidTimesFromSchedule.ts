@@ -95,6 +95,7 @@ function getAvailabilities(
   //   | undefined
 
   if (isMonday(date)) {
+    console.log("ismonday", groupedAvailabilities.monday)
     availabilities = groupedAvailabilities.monday
   }
   if (isTuesday(date)) {
