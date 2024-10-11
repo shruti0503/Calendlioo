@@ -145,6 +145,7 @@ function getAvailabilities(
       ),
       timezone
     )
+    console.log("{ start, end }",{ start, end })
 
     return { start, end }
   })
