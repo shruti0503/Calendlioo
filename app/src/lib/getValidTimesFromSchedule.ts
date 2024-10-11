@@ -88,6 +88,7 @@ function getAvailabilities(
   date: Date,
   timezone: string
 ) {
+  console.log("groupedAvailabilities",groupedAvailabilities)
   let availabilities:
     | (typeof ScheduleAvailabilityTable.$inferSelect)[]
     | undefined
