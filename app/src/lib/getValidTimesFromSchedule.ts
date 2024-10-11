@@ -35,7 +35,7 @@ export async function getValidTimesFromSchedule(
     with: { availabilities: true },
   })
 
-  console.log("schedule is: ", schedule)
+  console.log("schedule is this: ", schedule)
 
 
   if (schedule == null){
