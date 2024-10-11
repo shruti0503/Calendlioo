@@ -27,7 +27,10 @@ export async function getValidTimesFromSchedule(
   const start = timesInOrder[0]
   const end = timesInOrder.at(-1)
 
-  if (start == null || end == null) return []
+  if (start == null || end == null){
+    console.log("start == null || end == null")
+    return []
+  } 
 
   const schedule = await db.query.ScheduleTable.findFirst({
     where: ({ clerkUserId: userIdCol }, { eq }) =>
