@@ -12,42 +12,49 @@ import { conforms } from "lodash"
 export async function createMeeting(
   unsafeData: z.infer<typeof meetingActionSchema>
 ) {
-  const { success, data } = meetingActionSchema.safeParse(unsafeData)
-  console.log("meetingActionSchema.safeParse(unsafeData)",meetingActionSchema.safeParse(unsafeData))
-  console.log("success, data:", success, data)
+  try{
+    const { success, data } = meetingActionSchema.safeParse(unsafeData)
+    console.log("meetingActionSchema.safeParse(unsafeData)",meetingActionSchema.safeParse(unsafeData))
+    console.log("success, data:", success, data)
 
-  if (!success) return { error: true }
+    if (!success) return { error: true }
 
-  const event = await db.query.EventTable.findFirst({
-    where: ({ clerkUserId, isActive, id }, { eq, and }) =>
-      and(
-        eq(isActive, true),
-        eq(clerkUserId, data.clerkUserId),
-        eq(id, data.eventId)
-      ),
-  })
+    const event = await db.query.EventTable.findFirst({
+      where: ({ clerkUserId, isActive, id }, { eq, and }) =>
+        and(
+          eq(isActive, true),
+          eq(clerkUserId, data.clerkUserId),
+          eq(id, data.eventId)
+        ),
+    })
 
 
-  if (event == null){
-    console.log("e")
-    console.log("event is null", event)
-    return { error: true }
-  } 
-  const startInTimezone = fromZonedTime(data.startTime, data.timezone)
+    if (event == null){
+      console.log("e")
+      console.log("event is null", event)
+      return { error: true }
+    } 
+    const startInTimezone = fromZonedTime(data.startTime, data.timezone)
 
-  const validTimes = await getValidTimesFromSchedule([startInTimezone], event)
-  if (validTimes.length === 0) return { error: true }
+    const validTimes = await getValidTimesFromSchedule([startInTimezone], event)
+    if (validTimes.length === 0) return { error: true }
 
-  await createCalendarEvent({
-    ...data,
-    startTime: startInTimezone,
-    durationInMinutes: event.durationInMinutes,
-    eventName: event.name,
-  })
+    await createCalendarEvent({
+      ...data,
+      startTime: startInTimezone,
+      durationInMinutes: event.durationInMinutes,
+      eventName: event.name,
+    })
 
-  redirect(
-    `/book/${data.clerkUserId}/${
-      data.eventId
-    }/success?startTime=${data.startTime.toISOString()}`
-  )
+    redirect(
+      `/book/${data.clerkUserId}/${
+        data.eventId
+      }/success?startTime=${data.startTime.toISOString()}`
+    )
+
+  }
+  catch(err){
+    console.log("error while creating meeting", err);
+  }
+  
 }
