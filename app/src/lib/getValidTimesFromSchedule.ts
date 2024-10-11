@@ -38,7 +38,10 @@ export async function getValidTimesFromSchedule(
   console.log("schedule is: ", schedule)
 
 
-  if (schedule == null) return []
+  if (schedule == null){
+    console.log("schedule is null")
+    return []
+  } 
 
   const groupedAvailabilities = groupBy(
     schedule.availabilities,
