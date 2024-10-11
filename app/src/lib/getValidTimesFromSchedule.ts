@@ -1,4 +1,3 @@
-
 import { DAYS_OF_WEEK_IN_ORDER } from "@/data/contants"
 import { db } from "@/drizzle/db"
 import { ScheduleAvailabilityTable } from "@/drizzle/schema"
@@ -27,55 +26,95 @@ export async function getValidTimesFromSchedule(
   const start = timesInOrder[0]
   const end = timesInOrder.at(-1)
 
+  // Log initial time data and event details
+  console.log("timesInOrder:", timesInOrder)
+  console.log("Start Time:", start)
+  console.log("End Time:", end)
+  console.log("Event Details:", event)
+
   if (start == null || end == null) return []
 
+  // Fetch the schedule from the database
   const schedule = await db.query.ScheduleTable.findFirst({
     where: ({ clerkUserId: userIdCol }, { eq }) =>
       eq(userIdCol, event.clerkUserId),
     with: { availabilities: true },
   })
 
-  console.log("schedule is this: ", schedule)
+  // Log the schedule data fetched from the database
+  console.log("Fetched Schedule:", schedule)
 
-
-  if (schedule == null){
-    console.log("schedule is null")
+  if (schedule == null) {
+    console.log("Schedule is null, returning empty array")
     return []
-  } 
+  }
 
   const groupedAvailabilities = groupBy(
     schedule.availabilities,
     a => a.dayOfWeek
   )
 
+  // Log the grouped availabilities for easier debugging
+  console.log("Grouped Availabilities:", groupedAvailabilities)
+
+  // Fetch event times
   const eventTimes = await getCalendarEventTimes(event.clerkUserId, {
     start,
     end,
   })
 
-  return timesInOrder.filter(intervalDate => {
+  // Log the calendar event times
+  console.log("Fetched Event Times:", eventTimes)
+
+  // Log before filtering available times
+  console.log("Filtering valid times based on schedule availability and events")
+
+  // Filter the valid times
+  const validTimes = timesInOrder.filter(intervalDate => {
     const availabilities = getAvailabilities(
       groupedAvailabilities,
       intervalDate,
       schedule.timezone
     )
+
+    // Log availabilities for each time interval
+    console.log("Availabilities for", intervalDate, ":", availabilities)
+
     const eventInterval = {
       start: intervalDate,
       end: addMinutes(intervalDate, event.durationInMinutes),
     }
 
-    return (
-      eventTimes.every(eventTime => {
-        return !areIntervalsOverlapping(eventTime, eventInterval)
-      }) &&
+    // Log event interval being checked
+    console.log("Event Interval:", eventInterval)
+
+    // Check if the event times are overlapping with existing events or outside availability
+    const isValid = eventTimes.every(eventTime => {
+      const isOverlapping = areIntervalsOverlapping(eventTime, eventInterval)
+      console.log("Checking overlap with eventTime", eventTime, ":", isOverlapping)
+      return !isOverlapping
+    }) &&
       availabilities.some(availability => {
-        return (
-          isWithinInterval(eventInterval.start, availability) &&
-          isWithinInterval(eventInterval.end, availability)
+        const isWithinStart = isWithinInterval(eventInterval.start, availability)
+        const isWithinEnd = isWithinInterval(eventInterval.end, availability)
+        console.log(
+          "Checking availability overlap with availability",
+          availability,
+          ": start", isWithinStart, ", end", isWithinEnd
         )
+        return isWithinStart && isWithinEnd
       })
-    )
+
+    // Log the result for this time interval
+    console.log("Interval", intervalDate, "is valid:", isValid)
+
+    return isValid
   })
+
+  // Log the valid times after filtering
+  console.log("Valid Times:", validTimes)
+
+  return validTimes
 }
 
 function getAvailabilities(
@@ -92,29 +131,24 @@ function getAvailabilities(
     | (typeof ScheduleAvailabilityTable.$inferSelect)[]
     | undefined
 
-  if (isMonday(date)) {
-    availabilities = groupedAvailabilities.monday
-  }
-  if (isTuesday(date)) {
-    availabilities = groupedAvailabilities.tuesday
-  }
-  if (isWednesday(date)) {
-    availabilities = groupedAvailabilities.wednesday
-  }
-  if (isThursday(date)) {
-    availabilities = groupedAvailabilities.thursday
-  }
-  if (isFriday(date)) {
-    availabilities = groupedAvailabilities.friday
-  }
-  if (isSaturday(date)) {
-    availabilities = groupedAvailabilities.saturday
-  }
-  if (isSunday(date)) {
-    availabilities = groupedAvailabilities.sunday
-  }
+  // Log the current date and day of week being checked
+  console.log("Getting availabilities for date:", date)
 
-  if (availabilities == null) return []
+  if (isMonday(date)) availabilities = groupedAvailabilities.monday
+  if (isTuesday(date)) availabilities = groupedAvailabilities.tuesday
+  if (isWednesday(date)) availabilities = groupedAvailabilities.wednesday
+  if (isThursday(date)) availabilities = groupedAvailabilities.thursday
+  if (isFriday(date)) availabilities = groupedAvailabilities.friday
+  if (isSaturday(date)) availabilities = groupedAvailabilities.saturday
+  if (isSunday(date)) availabilities = groupedAvailabilities.sunday
+
+  // Log the availabilities found for this day
+  console.log("Availabilities for the day:", availabilities)
+
+  if (availabilities == null) {
+    console.log("No availabilities found, returning empty array")
+    return []
+  }
 
   return availabilities.map(({ startTime, endTime }) => {
     const start = fromZonedTime(
@@ -132,6 +166,9 @@ function getAvailabilities(
       ),
       timezone
     )
+
+    // Log the mapped availability times
+    console.log("Mapped availability:", { start, end })
 
     return { start, end }
   })
