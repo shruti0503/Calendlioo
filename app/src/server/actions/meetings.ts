@@ -41,7 +41,11 @@ export async function createMeeting(
     const startInTimezone = fromZonedTime(data.startTime, data.timezone)
 
     const validTimes = await getValidTimesFromSchedule([startInTimezone], event)
-    if (validTimes.length === 0) return { error: true }
+    console.log("valid times", validTimes)
+    if (validTimes.length === 0){
+      console.log("validTimes length is zero")
+      return { error: true }
+    } 
 
     await createCalendarEvent({
       ...data,
@@ -49,6 +53,8 @@ export async function createMeeting(
       durationInMinutes: event.durationInMinutes,
       eventName: event.name,
     })
+
+    console.log("event created successfullyy!")
 
     redirect(
       `/book/${data.clerkUserId}/${
