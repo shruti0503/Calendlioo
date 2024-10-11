@@ -116,7 +116,7 @@ function getAvailabilities(
     availabilities = groupedAvailabilities.sunday
   }
 
-  if (availabilities == null){
+  if (availabilities === null || availabilities===undefined ){
     console.log("no availabilities", availabilities);
     return []
   }
