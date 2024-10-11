@@ -12,7 +12,7 @@ import { conforms } from "lodash"
 export async function createMeeting(
   unsafeData: z.infer<typeof meetingActionSchema>
 ) {
-  try{
+  //try{
     console.log("create meeting inside ")
     console.log("meetingActionSchema",meetingActionSchema)
     const { success, data } = meetingActionSchema.safeParse(unsafeData)
@@ -47,24 +47,28 @@ export async function createMeeting(
       return { error: true }
     } 
 
-    await createCalendarEvent({
+   const eventdata= await createCalendarEvent({
       ...data,
       startTime: startInTimezone,
       durationInMinutes: event.durationInMinutes,
       eventName: event.name,
     })
+    console.log("event data is",eventdata )
 
     console.log("event created successfullyy!")
+    console.log("data.clerkUserId",data.clerkUserId)
+    console.log(" data.eventId", data.eventId)
+    console.log("data.startTime.toISOString()",data.startTime.toISOString())
 
-    redirect(
+     redirect(
       `/book/${data.clerkUserId}/${
         data.eventId
       }/success?startTime=${data.startTime.toISOString()}`
-    )
+    );
 
-  }
-  catch(err){
-    console.log("error while creating meeting", err);
-  }
+ // }
+  // catch(err){
+  //   console.log("error while creating meeting", err);
+  // }
   
 }
