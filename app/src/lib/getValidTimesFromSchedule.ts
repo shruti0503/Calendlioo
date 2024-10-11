@@ -114,7 +114,10 @@ function getAvailabilities(
     availabilities = groupedAvailabilities.sunday
   }
 
-  if (availabilities == null) return []
+  if (availabilities == null){
+    console.log("no availabilities", availabilities);
+    return []
+  }
 
   return availabilities.map(({ startTime, endTime }) => {
     const start = fromZonedTime(
