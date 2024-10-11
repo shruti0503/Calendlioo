@@ -97,26 +97,28 @@ function getAvailabilities(
   //   | (typeof ScheduleAvailabilityTable.$inferSelect)[]
   //   | undefined
 
-  if (isMonday(date)) {
+  console.log("groupedAvailabilities?.monday",groupedAvailabilities?.monday)
+
+  if (groupedAvailabilities?.monday) {
     console.log("ismonday", groupedAvailabilities.monday)
     availabilities = groupedAvailabilities.monday
   }
-  if (isTuesday(date)) {
+  if (groupedAvailabilities?.tuesday) {
     availabilities = groupedAvailabilities.tuesday
   }
-  if (isWednesday(date)) {
+  if (groupedAvailabilities?.wednesday) {
     availabilities = groupedAvailabilities.wednesday
   }
-  if (isThursday(date)) {
+  if (groupedAvailabilities?.thursday) {
     availabilities = groupedAvailabilities.thursday
   }
-  if (isFriday(date)) {
+  if (groupedAvailabilities.friday) {
     availabilities = groupedAvailabilities.friday
   }
-  if (isSaturday(date)) {
+  if (groupedAvailabilities?.saturday) {
     availabilities = groupedAvailabilities.saturday
   }
-  if (isSunday(date)) {
+  if (groupedAvailabilities?.sunday) {
     availabilities = groupedAvailabilities.sunday
   }
 
