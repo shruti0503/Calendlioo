@@ -89,9 +89,10 @@ function getAvailabilities(
   timezone: string
 ) {
   console.log("groupedAvailabilities",groupedAvailabilities)
-  let availabilities:
-    | (typeof ScheduleAvailabilityTable.$inferSelect)[]
-    | undefined
+  let availabilities
+  // :
+  //   | (typeof ScheduleAvailabilityTable.$inferSelect)[]
+  //   | undefined
 
   if (isMonday(date)) {
     availabilities = groupedAvailabilities.monday
@@ -119,6 +120,8 @@ function getAvailabilities(
     console.log("no availabilities", availabilities);
     return []
   }
+
+  console.log("availabilities.map",availabilities)
 
   return availabilities.map(({ startTime, endTime }) => {
     const start = fromZonedTime(
