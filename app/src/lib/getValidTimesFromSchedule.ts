@@ -18,6 +18,18 @@ import {
 } from "date-fns"
 import { fromZonedTime } from "date-fns-tz"
 
+function groupBy(array:any, key:any) {
+  return array.reduce((result:any, currentValue:any) => {
+    const groupKey = key(currentValue);
+    if (!result[groupKey]) {
+      result[groupKey] = [];
+    }
+    result[groupKey].push(currentValue);
+    return result;
+  }, {});
+}
+
+
 export async function getValidTimesFromSchedule(
   timesInOrder: Date[],
   event: { clerkUserId: string; durationInMinutes: number }
@@ -34,11 +46,9 @@ export async function getValidTimesFromSchedule(
   })
 
   if (schedule == null) return []
+  //@ts-ignore
+  const groupedAvailabilities = groupBy(schedule.availabilities, a => a.dayOfWeek);
 
-  const groupedAvailabilities = Object.groupBy(
-    schedule.availabilities,
-    a => a.dayOfWeek
-  )
 
   const eventTimes = await getCalendarEventTimes(event.clerkUserId, {
     start,
