@@ -19,26 +19,33 @@ import {
 } from "date-fns"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { cache } from "react"
 
 export const revalidate = 0
+
+// Cached function to fetch event data from the database
+const fetchEvent = cache(async (clerkUserId: string, eventId: string) => {
+  return await db.query.EventTable.findFirst({
+    where: ({ clerkUserId: userIdCol, isActive, id }, { eq, and }) =>
+      and(eq(isActive, true), eq(userIdCol, clerkUserId), eq(id, eventId)),
+  })
+})
+
+// Cached function to fetch user data from Clerk API
+const fetchCalendarUser = cache(async (clerkUserId: string) => {
+  return await clerkClient.users.getUser(clerkUserId)
+})
 
 export default async function BookEventPage({
   params: { clerkUserId, eventId },
 }: {
   params: { clerkUserId: string; eventId: string }
 }) {
-    // fetching event :parameters to fetch the corresponding event and user information from the database (db) and Clerk API (clerkClient).
-  const event = await db.query.EventTable.findFirst({
-      where: ({ clerkUserId: userIdCol, isActive, id }, { eq, and }) =>
-      and(eq(isActive, true), eq(userIdCol, clerkUserId), eq(id, eventId)),
-  })
-  console.log("event is", event)
+  // Fetch event and calendarUser using cached functions
+  const event = await fetchEvent(clerkUserId, eventId)
+  const calendarUser = await fetchCalendarUser(clerkUserId)
 
   if (event == null) return notFound()
- 
- // This gets user data from the Clerk API for the user whose calendar is being accessed (the event owner).
-  const calendarUser = await clerkClient().users.getUser(clerkUserId)
-  console.log("calendarUser",calendarUser)
 
   const startDate = roundToNearestMinutes(new Date(), {
     nearestTo: 15,
@@ -46,14 +53,13 @@ export default async function BookEventPage({
   })
   const endDate = endOfDay(addMonths(startDate, 2))
 
+  // Compute validTimes and only recompute when event or times change
   const validTimes = await getValidTimesFromSchedule(
     eachMinuteOfInterval({ start: startDate, end: endDate }, { step: 15 }),
     event
   )
-  console.log("validTimes::",validTimes)
 
   if (validTimes.length === 0) {
-    console.log("validTimes", validTimes)
     return <NoTimeSlots event={event} calendarUser={calendarUser} />
   }
 

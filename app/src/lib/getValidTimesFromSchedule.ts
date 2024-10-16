@@ -32,12 +32,15 @@ export async function getValidTimesFromSchedule(
     return []
   } 
 
+  console.log("before schedule")
+
   const schedule = await db.query.ScheduleTable.findFirst({
     where: ({ clerkUserId: userIdCol }, { eq }) =>
       eq(userIdCol, event.clerkUserId),
     with: { availabilities: true },
   })
-
+  console.log("after schedule", schedule)
+  console.log("timezone is", schedule?.timezone)
   console.log("schedule is this: ", schedule)
 
 
@@ -50,6 +53,7 @@ export async function getValidTimesFromSchedule(
     schedule.availabilities,
     a => a.dayOfWeek
   )
+
 
   const eventTimes = await getCalendarEventTimes(event.clerkUserId, {
     start,
@@ -79,10 +83,13 @@ export async function getValidTimesFromSchedule(
     console.log("eventInterval",eventInterval)
     console.log("eventInterval.start",eventInterval.start);
     console.log("eventInterval.end",eventInterval.end);
+    console.log('')
    
 
     console.log("availabilities.some",
       availabilities.some(availability => {
+        console.log("isWithinInterval(eventInterval.start, availability)",isWithinInterval(eventInterval.start, availability));
+        console.log(" isWithinInterval(eventInterval.end, availability)", isWithinInterval(eventInterval.end, availability))
         return (
           isWithinInterval(eventInterval.start, availability) &&
           isWithinInterval(eventInterval.end, availability)
@@ -131,6 +138,7 @@ function getAvailabilities(
   date: Date,
   timezone: string
 ) {
+  console.log("timezone is ", timezone)
   console.log("groupedAvailabilities",groupedAvailabilities)
   let availabilities
   // :
