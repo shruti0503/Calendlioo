@@ -75,6 +75,8 @@ export async function getValidTimesFromSchedule(
       })
     )
 
+    console.log("availabilities are", availabilities)
+
     console.log("availabilities.some",
       availabilities.some(availability => {
         return (
