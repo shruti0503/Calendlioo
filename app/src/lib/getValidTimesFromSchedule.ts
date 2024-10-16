@@ -69,13 +69,14 @@ export async function getValidTimesFromSchedule(
     return (
       eventTimes.every(eventTime => {
         return !areIntervalsOverlapping(eventTime, eventInterval)
-      }) &&
-      availabilities.some(availability => {
-        return (
-          isWithinInterval(eventInterval.start, availability) &&
-          isWithinInterval(eventInterval.end, availability)
-        )
-      })
+      }) 
+      // &&
+      // availabilities.some(availability => {
+      //   return (
+      //     isWithinInterval(eventInterval.start, availability) &&
+      //     isWithinInterval(eventInterval.end, availability)
+      //   )
+      // })
     )
   })
 }
