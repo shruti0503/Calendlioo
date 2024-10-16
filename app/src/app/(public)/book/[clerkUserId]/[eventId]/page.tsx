@@ -56,7 +56,8 @@ export default async function BookEventPage({
   // Compute validTimes and only recompute when event or times change
   const validTimes = await getValidTimesFromSchedule(
     eachMinuteOfInterval({ start: startDate, end: endDate }, { step: 15 }),
-    event
+    event,
+    false
   )
 
   if (validTimes.length === 0) {

@@ -40,7 +40,7 @@ export async function createMeeting(
     } 
     const startInTimezone = fromZonedTime(data.startTime, data.timezone)
 
-    const validTimes = await getValidTimesFromSchedule([startInTimezone], event)
+    const validTimes = await getValidTimesFromSchedule([startInTimezone], event, true)
     console.log("valid times", validTimes)
     if (validTimes.length === 0){
       console.log("validTimes length is zero")

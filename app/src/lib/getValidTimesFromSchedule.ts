@@ -32,7 +32,8 @@ function groupBy(array:any, key:any) {
 
 export async function getValidTimesFromSchedule(
   timesInOrder: Date[],
-  event: { clerkUserId: string; durationInMinutes: number }
+  event: { clerkUserId: string; durationInMinutes: number },
+  isBook:Boolean
 ) {
   const start = timesInOrder[0]
   const end = timesInOrder.at(-1)
@@ -66,18 +67,37 @@ export async function getValidTimesFromSchedule(
       end: addMinutes(intervalDate, event.durationInMinutes),
     }
 
-    return (
-      eventTimes.every(eventTime => {
-        return !areIntervalsOverlapping(eventTime, eventInterval)
-      }) 
-      // &&
-      // availabilities.some(availability => {
-      //   return (
-      //     isWithinInterval(eventInterval.start, availability) &&
-      //     isWithinInterval(eventInterval.end, availability)
-      //   )
-      // })
-    )
+    if(isBook){
+      return (
+        eventTimes.every(eventTime => {
+          return !areIntervalsOverlapping(eventTime, eventInterval)
+        }) 
+        // &&
+        // availabilities.some(availability => {
+        //   return (
+        //     isWithinInterval(eventInterval.start, availability) &&
+        //     isWithinInterval(eventInterval.end, availability)
+        //   )
+        // })
+      )
+
+    }
+    else{
+      return (
+        eventTimes.every(eventTime => {
+          return !areIntervalsOverlapping(eventTime, eventInterval)
+        }) 
+        &&
+        availabilities.some(availability => {
+          return (
+            isWithinInterval(eventInterval.start, availability) &&
+            isWithinInterval(eventInterval.end, availability)
+          )
+        })
+      )
+    }
+
+   
   })
 }
 
