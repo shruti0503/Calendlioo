@@ -67,11 +67,29 @@ export async function getValidTimesFromSchedule(
       end: addMinutes(intervalDate, event.durationInMinutes),
     }
 
+    console.log(" eventTimes.every",
+      eventTimes.every(eventTime => {
+        // console.log("areIntervalsOverlapping",areIntervalsOverlapping(eventTime, eventInterval));
+        // console.log("!areIntervalsOverlapping",!areIntervalsOverlapping(eventTime, eventInterval))
+        return !areIntervalsOverlapping(eventTime, eventInterval)
+      })
+    )
+
+    console.log("availabilities.some",
+      availabilities.some(availability => {
+        return (
+          isWithinInterval(eventInterval.start, availability) &&
+          isWithinInterval(eventInterval.end, availability)
+        )
+      })
+    )
+    
+
     console.log("final ans", 
 
     eventTimes.every(eventTime => {
-      console.log("areIntervalsOverlapping",areIntervalsOverlapping(eventTime, eventInterval));
-      console.log("!areIntervalsOverlapping",!areIntervalsOverlapping(eventTime, eventInterval))
+      // console.log("areIntervalsOverlapping",areIntervalsOverlapping(eventTime, eventInterval));
+      // console.log("!areIntervalsOverlapping",!areIntervalsOverlapping(eventTime, eventInterval))
       return !areIntervalsOverlapping(eventTime, eventInterval)
     })
     &&
@@ -80,7 +98,8 @@ export async function getValidTimesFromSchedule(
         isWithinInterval(eventInterval.start, availability) &&
         isWithinInterval(eventInterval.end, availability)
       )
-    }))
+    })
+  )
 
     return (
       eventTimes.every(eventTime => {
