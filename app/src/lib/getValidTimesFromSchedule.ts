@@ -69,9 +69,17 @@ export async function getValidTimesFromSchedule(
 
     if(isBook){
       return (
+         // availabilities.some(availability => {
+        //   return (
+        //     isWithinInterval(eventInterval.start, availability) &&
+        //     isWithinInterval(eventInterval.end, availability)
+        //   )
+        // })
+        
         eventTimes.every(eventTime => {
           return !areIntervalsOverlapping(eventTime, eventInterval)
         }) 
+
         // &&
         // availabilities.some(availability => {
         //   return (
